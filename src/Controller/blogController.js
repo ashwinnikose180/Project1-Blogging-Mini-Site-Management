@@ -2,6 +2,8 @@
 
 const mongoose = require("mongoose")
 const { query } = require('express');
+const authorModel = require('../Model/authorModel')
+const blogModel = require('../Model/blogModel')
 
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody)
@@ -32,7 +34,7 @@ let createBlog = async function (req, res) {
         if (!isValid(data.authorId)) return res.status(400).send({ status: false, msg: " authorId is not empty" })
         if (!mongoose.Types.ObjectId.isValid(authorId)) return res.status(400).send({ status: false, mess: "Please enter a valid id " })
 
-        let isExistsAuthorId = await blogModel.findById(authorId)
+        let isExistsAuthorId = await authorModel.findById(authorId)
         if (!isExistsAuthorId) return res.status(400).send({ status: false, msg: "This author id is not present in db" })
 
         let newBlogObject = await blogModel.create(data)

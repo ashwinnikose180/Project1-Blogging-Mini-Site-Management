@@ -55,14 +55,7 @@ const createAuthor = async (req, res) => {
         let isUniqueEmail = await authorModel.findOne({ email: data.email })
         if (isUniqueEmail) return res.status(400).send({ status: false, msg: "already exits" })
         // title contains right value or not 
-        const titleData = data.title;
-        if (titleData) {
-            if (titleData != "Mr" || titleData != "Mrs" || titleData != "Miss") {
-                return res.status(400).send({ status: false, msg: "Please choose title from Mr, Mrs and Miss " });
-            }
-
-
-        }
+       
 
         let arrKeys = Object.keys(data);
         if (arrKeys.length == 0) return res.status(400).send({ status: true, msg: "Data is required" })
