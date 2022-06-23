@@ -3,8 +3,7 @@ const blogModel = require('../Model/blogModel')
 const authorModel = require('../Model/authorModel')
 const mongoose = require("mongoose")
 const { query } = require('express');
-const authorModel = require('../Model/authorModel')
-const blogModel = require('../Model/blogModel')
+
 
 
 

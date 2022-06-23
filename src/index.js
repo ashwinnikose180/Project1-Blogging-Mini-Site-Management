@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-mongoose.connect("mongodb+srv://myfunctionup-data:NemFawWgwh8vnMPv@cluster0.h27rj25.mongodb.net/Akashgupta-db",
+mongoose.connect("mongodb+srv://pattamu:iKHwECgQCaYNVpge@sandeepcluster.9rzkh.mongodb.net/ashwin5196",
     { useNewUrlParser: true })
 
 
