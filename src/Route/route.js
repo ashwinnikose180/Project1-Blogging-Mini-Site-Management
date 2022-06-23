@@ -2,40 +2,30 @@ const express = require('express')
 const authorController = require('../Controller/authorController');
 const blogController = require('../Controller/blogController');
 const loginController = require('../Controller/login')
-const authentication = require('../Middleware/authentication')
+const auth = require('../Middleware/auth')
 const router = express.Router();
 
 
-// Author API's == Create an author - atleast 5 authors ===> no need authentication and authr..
+// create Author API
 router.post('/authors', authorController.createAuthor)
-//  authentication.isPresentToken,authentication.isVerifyToken,authentication.isLoggedinAuthor, blogMiddleware.isAuthorIdValid,
-// Blog API's yaha create krte time author id to dege hi denge ---> ab authorId se jayege hum emailId pr using populate
-router.post('/blogs', blogController.createBlog)
-// working perfect 
-// authentication.isPresentToken, authentication.isVerifyToken, authentication.isloggedInUser,
-router.delete("/delete/:blogId", blogController.deleteById)
 
-// working perfect ===> tags prob is here
-router.get('/blogs', blogController.getBlogs)
+// created blog API
+router.post('/blogs', auth.authentication, auth.isVerifyToken, blogController.createBlog)
 
-router.delete('/blogs', blogController.deleteBlog)
+// created Get Blogs API
+router.get('/blogs', auth.authentication, auth.isVerifyToken, blogController.getBlogs)
 
+// update Blog API  by blogId
+router.put('/blogs/:blogId', auth.authentication, auth.isVerifyToken, auth.authorise, blogController.updateBlog)
 
+// created Delete blog by Id API
+router.delete("/delete/:blogId", auth.authentication, auth.isVerifyToken, auth.authorise, blogController.deleteById)
 
-
-
-
+// created delte blogs by query params
+router.delete('/blogs', auth.authentication, auth.isVerifyToken, auth.authorise, blogController.deleteBlog)
 
 
-
-// phase ---2
-// login
+// phase -- II  ---> created Login API
 router.post('/login', loginController.login)
-
-
-
-
-
-router.get("/blogs", blogController.getBlogs)
 
 module.exports = router;

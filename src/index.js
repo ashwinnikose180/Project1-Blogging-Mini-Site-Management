@@ -1,4 +1,4 @@
-const express = require('express'); 
+const express = require('express');
 const bodyParser = require('body-parser');
 const route = require('../src/Route/route');
 const { default: mongoose } = require('mongoose');
@@ -10,12 +10,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-mongoose.connect("mongodb+srv://pattamu:iKHwECgQCaYNVpge@sandeepcluster.9rzkh.mongodb.net/ashwin5196",
-   { useNewUrlParser:true })
+mongoose.connect("mongodb+srv://myfunctionup-data:NemFawWgwh8vnMPv@cluster0.h27rj25.mongodb.net/Akashgupta-db",
+    { useNewUrlParser: true })
 
 
-.then( () => console.log("MongoDb is connected"))
-.catch ( err => console.log(err) )
+    .then(() => console.log("MongoDb is connected"))
+    .catch(err => console.log(err))
 
 
 
