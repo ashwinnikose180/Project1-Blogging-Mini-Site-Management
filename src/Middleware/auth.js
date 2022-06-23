@@ -10,6 +10,7 @@ const authentication = function (req, res, next) {
     if (!(req.headers["x-api-key"])) {
         return res.status(401).send({ status: false, msg: "token must be present" })
     }
+ 
     next()
 
 };
@@ -22,7 +23,7 @@ const isVerifyToken = function (req, res, next) {
         if (!decodedToken) {
             res.status(401).send({ status: false, msg: "token is invalid" });
         }
-        next()
+         next()
     } catch (err) {
         res.status(401).send({ status: false, msg: "token is invalid" });
     }
@@ -36,10 +37,15 @@ const authorise = async function (req, res, next) {
         let decodedToken = jwt.verify(token, "project1")
 
         let userToBeModified = req.params.blogId
-        let blogData = await blogModel.findById(userToBeModified)
-        let userLoggedIn = decodedToken.authorId
 
-        if (blogData.authorId != userLoggedIn)
+        let blogData = await blogModel.findById(userToBeModified)
+        if(!blogData) return res.status(401).send({ status: false, msg: "Invalid Blog Id" })
+      
+        let userLoggedIn = decodedToken.authorId
+    
+        // convert objectId to String
+       let authorId = blogData.authorId.toString()
+        if ( authorId!= userLoggedIn)
             return res.status(403).send({ status: false, msg: 'User logged is not allowed to modify the requested users data' })
     }
     catch (err) {

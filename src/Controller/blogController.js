@@ -32,10 +32,10 @@ let createBlog = async function (req, res) {
         let authorId = data.authorId
 
         //  checking that required key is present or not
-        if (data.title == undefined) return res.status(400).send({ status: false, msg: "Title tag is required" })
-        if (data.body == undefined) return res.status(400).send({ status: false, msg: "body tag is required" })
-        if (data.category == undefined) return res.status(400).send({ status: false, msg: "category tag is required" })
-        if (data.authorId == undefined) return res.status(400).send({ status: false, msg: "authorId tag is required" })
+        if (!data.title) return res.status(400).send({ status: false, msg: "Title tag is required" })
+        if (!data.body) return res.status(400).send({ status: false, msg: "body tag is required" })
+        if (!data.category) return res.status(400).send({ status: false, msg: "category tag is required" })
+        if (!data.authorId) return res.status(400).send({ status: false, msg: "authorId tag is required" })
 
         // here we are checking that if any field is empty or send data with space 
         if (!isValid(data.title)) return res.status(400).send({ status: false, msg: "title is not empty" })
@@ -73,6 +73,7 @@ const getBlogs = async function (req, res) {
             isPublished: true,
             ...query
         };
+        console.log(query)
         if (isValidRequestBody(query)) {
             const { authorId, category, subcategory, tags } = query
 
@@ -95,6 +96,7 @@ const getBlogs = async function (req, res) {
         }
 
         let getSpecificBlogs = await blogModel.find(filter);
+        console.log(getSpecificBlogs)
 
         if (getSpecificBlogs.length == 0) {
             return res.status(400).send({ status: false, data: "No blogs can be found" });
@@ -115,17 +117,20 @@ const updateBlog = async function (req, res) {
     try {
         //getting blog Object id from params
         let blogId = req.params.blogId
+    
 
         // This blogId is present in db or not
         let blog = await blogModel.findById(blogId);
-
+      
         //if not present then send error mess
         if (!blog || blog.isDeleted == true) {
             return res.status(404).send({ status: false, msg: "no such blog exists" });
         };
+        console.log("hello 12")
 
         // getting all the requested data form body for updatation
         let blogData = req.body;
+      
 
         //check that if this field is available then it's contains right data/ value/content or not
         if (blogData.title) {
@@ -135,20 +140,24 @@ const updateBlog = async function (req, res) {
             if (!isValid(blogData.category)) return res.status(400).send({ status: false, msg: "category field is not empty" })
         }
         if (blogData.tags) {
-            if (!isValid(blogData.category)) return res.status(400).send({ status: false, msg: "tags field is not empty" })
+            if (!isValid(blogData.tags)) return res.status(400).send({ status: false, msg: "tags field is not empty" })
         }
         if (blogData.category) {
             if (!isValid(blogData.subcategory)) return res.status(400).send({ status: false, msg: "subcategory field is not empty" })
         }
 
         //if everything is fine then update it with new data and time and return updated data in responce with 200 status
-        let updateBlog = await blogModel.findOneAndUpdate({ _id: blogId }, blogData, { new: true }).findOneAndUpdate({ $set: { isPublished: true } }, { $set: { publishedAt: new Date() } })
+       let updateBlog = await blogModel.findOneAndUpdate({ _id: blogId}, { $set: { "title": req.body.title, "body": req.body.body, "category": req.body.category ,"isPublished":true ,"publishedAt": new Date() }, 
+        $push: { "tags": req.body.tags, "subcategory": req.body.subcategory } }, { new: true })
         return res.status(200).send({ status: true, data: updateBlog });
 
     } catch (err) {
         return res.status(500).send({ status: false, msg: "Internal Server Error" })
     }
 };
+
+
+
 
 // ================================================ ** Write logic DeleteByID API **===================================================
 
@@ -164,9 +173,10 @@ const deleteById = async function (req, res) {
         return res.status(404).send({ status: false, msg: "Please provide a Valid blogId" })
     }
     let fullObject = await blogModel.findById(blog)
-
-    if (fullObject.isPublished != false && fullObject.isdeleted == false) {
-        let newData = await blogModel.findByIdAndUpdate(blog, { $set: { isdeleted: true } })
+   
+    console.log(blog);
+    if (fullObject.isPublished != false && fullObject.isDeleted == false) {
+        let newData = await blogModel.updateOne({_id:blog},{ $set: { "isDeleted": true } })
         res.status(200).send()
     }
 
@@ -225,7 +235,7 @@ const deleteBlog = async function (req, res) {
             return res.status(404).send({ status: false, msg: "No blogs can be found" });
         }
 
-        let deletedData = await blogModel.updateMany({ $set: { isdeleted: true } })
+        let deletedData = await blogModel.updateMany({ $set: { isDeleted: true } })
         res.status(200).send({ status: true, data: deletedData });
 
 

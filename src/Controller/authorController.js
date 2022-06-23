@@ -44,18 +44,22 @@ const createAuthor = async (req, res) => {
     try {
         let data = req.body
 
+        //deny empty data request {}
+        let arrKeys = Object.keys(data);
+        if (arrKeys.length == 0) return res.status(400).send({ status: true, msg: "Data is required" })
+
         //  checking that required key is present or not
-        if (data.fname == undefined) return res.status(400).send({ status: false, msg: "fname is required" })
-        if (data.lname == undefined) return res.status(400).send({ status: false, msg: "lname is required" })
-        if (data.title == undefined) return res.status(400).send({ status: false, msg: "title is required" })
-        if (data.email == undefined) return res.status(400).send({ status: false, msg: "email is required" })
-        if (data.password == undefined) return res.status(400).send({ status: false, msg: "password is required" })
+        if (!data.fname) return res.status(400).send({ status: false, msg: "fname is required" })
+        if (!data.lname) return res.status(400).send({ status: false, msg: "lname is required" })
+        if (!data.title) return res.status(400).send({ status: false, msg: "title is required" })
+        if (!data.email) return res.status(400).send({ status: false, msg: "email is required" })
+        if (!data.password) return res.status(400).send({ status: false, msg: "password is required" })
 
         // here we are checking that if any field is empty or send data with space 
         if (!isValid(data.fname)) return res.status(400).send({ status: false, msg: "invalid fName" })
         if (!isValid(data.lname)) return res.status(400).send({ status: false, msg: "invalid lName" })
         if (!isValid(data.title)) return res.status(400).send({ status: false, msg: "invalid title" })
-        if (!isValid(data.email)) return res.status(400).send({ status: false, msg: "email is not empty" })
+        if (!isValid(data.email)) return res.status(400).send({ status: false, msg: "email should not be empty" })
         if (!isValid(data.password)) return res.status(400).send({ status: false, msg: "invalid password" })
 
         // email format is valid or not by using isVerifyString()
@@ -73,9 +77,7 @@ const createAuthor = async (req, res) => {
         let arr = ["Mr", "Mrs", "Miss"]
         if (!arr.includes(data.title)) return res.status(400).send({ status: false, msg: "This is not valid value for title" })
 
-        //deny empty data request {}
-        let arrKeys = Object.keys(data);
-        if (arrKeys.length == 0) return res.status(400).send({ status: true, msg: "Data is required" })
+     
 
         // everyting is fine then create data in database and send the responce with satatus 201
         let created = await authorModel.create(data)
