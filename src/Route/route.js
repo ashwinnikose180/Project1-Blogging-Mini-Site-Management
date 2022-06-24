@@ -22,8 +22,8 @@ router.put('/blogs/:blogId', auth.authentication, auth.isVerifyToken, auth.autho
 router.delete("/delete/:blogId", auth.authentication, auth.isVerifyToken, auth.authorise, blogController.deleteById)
 
 // created delte blogs by query params
-// auth.authentication, auth.isVerifyToken, auth.authorise
-router.delete('/blogs', blogController.deleteBlog)
+// 
+router.delete('/blogs',auth.authentication, auth.isVerifyToken, auth.authForDelQuery)
 
 
 // phase -- II  ---> created Login API

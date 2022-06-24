@@ -73,12 +73,13 @@ const getBlogs = async function (req, res) {
             isPublished: true,
             ...query
         };
-        
         if (isValidRequestBody(query)) {
             const { authorId, category, subcategory, tags } = query
 
             if (isValid(category)) {
                 filter['category'] = category.trim()
+                
+               
 
             }
             if (isValid(authorId)) {
@@ -189,66 +190,66 @@ const deleteById = async function (req, res) {
 // ================================================ ** Write logic for Delete Blog by query params api **=========================================
 
 
-const deleteBlog = async function (req, res) {
-    try {
-        let queryData = req.query
+// const deleteBlog = async function (req, res) {
+//     try {
+//         let queryData = req.query
 
-        //creating a object 
-        let filter = {
-            isdeleted: false,
-            isPublished: true,
-            ...queryData
-        };
+//         //creating a object 
+//         let filter = {
+//             isdeleted: false,
+//             isPublished: false,
+//             ...queryData
+//         };
         
-        //Here i am using destructuring 
-        const { authorId, category, subcategory, tags } = queryData
+//         //Here i am using destructuring 
+//         const { authorId, category, subcategory, tags } = queryData
         
-        if (category) {
-            let verifyCategory = await blogModel.findOne({ category: category })
-            if (!verifyCategory) {
-                return res.status(404).send({ status: false, msg: 'No blogs in this category exist' })
-            }
-        }
-        if (authorId) {
-            let verifyCategory = await blogModel.findOne({ authorId: authorId })
-            if (!verifyCategory) {
-                return res.status(404).send({ status: false, msg: 'author id is not exists' })
-            }
-        }
-        if (tags) {
+//         if (category) {
+//             let verifyCategory = await blogModel.findOne({ category: category })
+//             if (!verifyCategory) {
+//                 return res.status(404).send({ status: false, msg: 'No blogs in this category exist' })
+//             }
+//         }
+//         if (authorId) {
+//             let verifyCategory = await blogModel.findOne({ authorId: authorId })
+//             if (!verifyCategory) {
+//                 return res.status(404).send({ status: false, msg: 'author id is not exists' })
+//             }
+//         }
+//         if (tags) {
 
-            if (!await blogModel.find({ tags: tags })) {
-                return res.status(404).send({ status: false, msg: 'no blog with this tags exist' })
-            }
-        }
+//             if (!await blogModel.find({ tags: tags })) {
+//                 return res.status(404).send({ status: false, msg: 'no blog with this tags exist' })
+//             }
+//         }
 
-        if (subcategory) {
+//         if (subcategory) {
 
-            if (!await blogModel.exists(subcategory)) {
-                return res.status(404).send({ status: false, msg: 'no blog with this subcategory exist' })
-            }
-        }
+//             if (!await blogModel.exists(subcategory)) {
+//                 return res.status(404).send({ status: false, msg: 'no blog with this subcategory exist' })
+//             }
+//         }
 
-        let getSpecificBlogs = await blogModel.find(filter);
+//         let getSpecificBlogs = await blogModel.find(filter);
 
-        if (getSpecificBlogs.length == 0) {
-            return res.status(404).send({ status: false, msg: "No blogs can be found" });
-        }
+//         if (getSpecificBlogs.length == 0) {
+//             return res.status(404).send({ status: false, msg: "No blogs can be found" });
+//         }
 
-        let deletedData = await blogModel.updateMany({ $set: { isDeleted: true } })
-        res.status(200).send({ status: true, data: deletedData });
+//         let deletedData = await blogModel.updateMany({ $set: { isDeleted: true } })
+//         res.status(200).send({ status: true, data: deletedData });
 
 
-    }
-    catch (error) {
-        res.status(500).send({ status: false, err: error.message });
-    }
-};
+//     }
+//     catch (error) {
+//         res.status(500).send({ status: false, err: error.message });
+//     }
+// };
 
 
 // ================================================ ** Exprots all modules here **===================================================
 
 module.exports = {
-    getBlogs, deleteBlog, createBlog, updateBlog, deleteById
+    getBlogs,  createBlog, updateBlog, deleteById
 }
 

@@ -55,6 +55,27 @@ const authorise = async function (req, res, next) {
     next()
 };
 
-// ================================================ ** Exprots all modules here **===================================================
 
-module.exports = { authentication, authorise, isVerifyToken }
+const authForDelQuery = async function(req,res,next)
+{
+    let token = req.headers["x-api-key"]
+    let decodedToken = jwt.verify(token, "project1")
+    let queryAuthorId = req.query.authorId
+       let filter =req.query
+       filter.authorId = decodedToken.authorId
+       filter.isDeleted=false
+       filter.isPublised=false
+
+    if(filter.blogId) return res.status(400).send({status:false,msg:"can't find by blogId"})
+    if(queryAuthorId != decodedToken.authorId) return res.status(403).send({status:false, msg:`you are not Authorise to access data by using this authorId: ${queryAuthorId}`})
+    
+    let data= await blogModel.updateMany(filter,{$set:{isDeleted:true}},{new:true})
+
+    
+    res.send({data:data})
+
+}
+
+//================================================ ** Exprots all modules here ** ===================================================
+
+module.exports = { authentication, authorise, isVerifyToken,authForDelQuery }
