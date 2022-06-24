@@ -19,7 +19,7 @@ router.get('/blogs',auth.authentication, auth.isVerifyToken, blogController.getB
 router.put('/blogs/:blogId', auth.authentication, auth.isVerifyToken, auth.authorise, blogController.updateBlog)
 
 // created Delete blog by Id API
-router.delete("/delete/:blogId", auth.authentication, auth.isVerifyToken, auth.authorise, blogController.deleteById)
+router.delete("/blogs/:blogId", auth.authentication, auth.isVerifyToken, auth.authorise, blogController.deleteById)
 
 // created delte blogs by query params
 // 
