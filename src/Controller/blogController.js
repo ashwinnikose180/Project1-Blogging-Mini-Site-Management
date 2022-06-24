@@ -73,7 +73,7 @@ const getBlogs = async function (req, res) {
             isPublished: true,
             ...query
         };
-        console.log(query)
+        
         if (isValidRequestBody(query)) {
             const { authorId, category, subcategory, tags } = query
 
@@ -126,7 +126,7 @@ const updateBlog = async function (req, res) {
         if (!blog || blog.isDeleted == true) {
             return res.status(404).send({ status: false, msg: "no such blog exists" });
         };
-        console.log("hello 12")
+       
 
         // getting all the requested data form body for updatation
         let blogData = req.body;
@@ -174,7 +174,7 @@ const deleteById = async function (req, res) {
     }
     let fullObject = await blogModel.findById(blog)
    
-    console.log(blog);
+
     if (fullObject.isPublished != false && fullObject.isDeleted == false) {
         let newData = await blogModel.updateOne({_id:blog},{ $set: { "isDeleted": true } })
         res.status(200).send()

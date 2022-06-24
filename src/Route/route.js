@@ -13,7 +13,7 @@ router.post('/authors', authorController.createAuthor)
 router.post('/blogs', auth.authentication, auth.isVerifyToken, blogController.createBlog)
 
 // created Get Blogs API
-router.get('/blogs', auth.authentication, auth.isVerifyToken, blogController.getBlogs)
+router.get('/blogs',auth.authentication, auth.isVerifyToken, blogController.getBlogs)
 
 // update Blog API  by blogId
 router.put('/blogs/:blogId', auth.authentication, auth.isVerifyToken, auth.authorise, blogController.updateBlog)
