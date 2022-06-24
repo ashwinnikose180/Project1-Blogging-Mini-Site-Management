@@ -71,7 +71,7 @@ const createAuthor = async (req, res) => {
 
         // Email is unique or not
         let isUniqueEmail = await authorModel.findOne({ email: data.email })
-        if (isUniqueEmail) return res.status(400).send({ status: false, msg: "already exits" })
+        if (isUniqueEmail) return res.status(400).send({ status: false, msg: "email is already exits" })
 
         // title contains right value or not   enum: ["Mr", "Mrs", "Miss"]
         let arr = ["Mr", "Mrs", "Miss"]
