@@ -158,7 +158,7 @@ const updateBlog = async function (req, res) {
         if (blogData.tags) {
             if (!isValid(blogData.tags)) return res.status(400).send({ status: false, msg: "tags field is not empty" })
         }
-        if (blogData.category) {
+        if (blogData.subcategory) {
             if (!isValid(blogData.subcategory)) return res.status(400).send({ status: false, msg: "subcategory field is not empty" })
         }
 
@@ -177,7 +177,7 @@ const updateBlog = async function (req, res) {
 
 
 
-// ================================================ ** Write logic DeleteByID API **===================================================
+// ================================================ ** Write logic DeleteByID API ** ===================================================
 
 const deleteById = async function (req, res) {
 
@@ -191,9 +191,10 @@ const deleteById = async function (req, res) {
     if (!mongoose.Types.ObjectId.isValid(blog)) {
         return res.status(404).send({ status: false, msg: "Please provide a Valid blogId" })
     }
-    let fullObject = await blogModel.findById(blog)
+    let fullObject = await blogModel.findById(blog) 
 
     if (!fullObject) return res.status(400).send({ status: false, msg: "This blog id is not available in database" })
+    //autheri.. logic
     if (fullObject.authorId.toString() !== authorTokenId) return res.status(403).send({ status: false, msg: "you are not autharise for Update anoter person data" })
 
 
@@ -216,9 +217,6 @@ const deleteById = async function (req, res) {
 const deleteBlog = async function (req, res) {
     try {
 
-
-        // let token = req.headers["x-api-key"]
-        // let decodedToken = jwt.verify(token, "project1")
         let authorTokenId = req.authorId
         let queryAuthorId = req.query.authorId
 
@@ -227,12 +225,28 @@ const deleteBlog = async function (req, res) {
             isdeleted: false,
             isPublished: false,
             authorId: authorTokenId,
+            
             ...query
         };
 
+
+       let totalKey= Object.keys(req.query)
+        if(totalKey.length==0) return res.status(400).send({status:false, msg:"Please provide a some query for Proper responce"})
+        if(queryAuthorId=='' || queryAuthorId)
+        {
+            if (!mongoose.Types.ObjectId.isValid(queryAuthorId)) {
+                return res.status(404).send({ status: false, msg: "Please provide a Valid AuthorId" })
+            }
+        }
+        // this field should not be empty
+        if(req.query.tags=='' || req.query.tags) return res.status(400).send({ status: false, msg: "Tags field should not be empty" })
+        if(req.query.subcategory=='' || req.query.subcategory) return res.status(400).send({ status: false, msg: "Subcategory field should not be empty" })
+        if(req.query.category=='' || req.query.category) return res.status(400).send({ status: false, msg: "category field should not be empty" })
+
+        
         if (filter.blogId) return res.status(400).send({ status: false, msg: "can't find by blogId" })
         if (queryAuthorId) {
-            if (queryAuthorId != decodedToken.authorId) return res.status(403).send({ status: false, msg: `you are not Authorise to access data by using this authorId: ${queryAuthorId}` })
+            if (queryAuthorId != authorTokenId) return res.status(403).send({ status: false, msg: `you are not Authorise to access data by using this authorId: ${queryAuthorId}` })
         }
         if (isValidRequestBody(query)) {
             const { authorId, category, subcategory, tags } = query
