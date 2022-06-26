@@ -291,8 +291,7 @@ const deleteBlog = async function (req, res) {
         }
 
 
-        let deletedData = await blogModel.updateMany(filter, { $set: { isDeleted: true } })
-
+        let deletedData = await (await blogModel.updateMany(filter, { $set: { isDeleted: true } }))
         res.status(200).send({ status: true, data: deletedData });
     }
     catch (error) {
