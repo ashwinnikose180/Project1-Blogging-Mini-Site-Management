@@ -75,7 +75,8 @@ const createAuthor = async (req, res) => {
 
         // title contains right value or not   enum: ["Mr", "Mrs", "Miss"]
         let arr = ["Mr", "Mrs", "Miss"]
-        if (!arr.includes(data.title)) return res.status(400).send({ status: false, msg: "This is not valid value for title" })
+    
+        if (!arr.includes(data.title)) return res.status(400).send({ status: false, msg: "This is not valid value for title.You should try to same formate [Mr, Mrs, Miss" })
 
      
 
