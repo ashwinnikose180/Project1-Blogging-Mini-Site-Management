@@ -79,13 +79,20 @@ const getBlogs = async function (req, res) {
             isPublished: true,
             ...query
         };
+
+        if(query.authorId || query.authorId=='')
+        {
+            if (!mongoose.Types.ObjectId.isValid(query.authorId) || query.authorId.toString()=='') return res.status(404).send({ status: false, msg: "Please provide a Valid authorId" })
+
+        }
+       
+
         if (isValidRequestBody(query)) {
             const { authorId, category, subcategory, tags } = query
 
             if (isValid(category)) {
                 filter['category'] = category.trim()
             }
-
 
             // console.log(req.query.authorId)
             if (filter.authorId) {
@@ -191,7 +198,7 @@ const deleteById = async function (req, res) {
     if (!mongoose.Types.ObjectId.isValid(blog)) {
         return res.status(404).send({ status: false, msg: "Please provide a Valid blogId" })
     }
-    let fullObject = await blogModel.findById(blog) 
+    let fullObject = await blogModel.findById(blog)
 
     if (!fullObject) return res.status(400).send({ status: false, msg: "This blog id is not available in database" })
     //autheri.. logic
@@ -225,42 +232,38 @@ const deleteBlog = async function (req, res) {
             isdeleted: false,
             isPublished: false,
             authorId: authorTokenId,
-            
+
             ...query
         };
 
 
-       let totalKey= Object.keys(req.query)
-        if(totalKey.length==0) return res.status(400).send({status:false, msg:"Please provide a some query for Proper responce"})
-        if(req.query.body || req.query.body =='' ) return res.status(400).send({status:false, msg:"You can not delete document by using body"})
-       
-        if(req.query.title || req.query.title =='' ) return res.status(400).send({status:false, msg:"You can not delete document by using title"})
-        
-        if(queryAuthorId || queryAuthorId =='')
-        {
+        let totalKey = Object.keys(req.query)
+        if (totalKey.length == 0) return res.status(400).send({ status: false, msg: "Please provide a some query for Proper responce" })
+        if (req.query.body || req.query.body == '') return res.status(400).send({ status: false, msg: "You can not delete document by using body" })
+
+        if (req.query.title || req.query.title == '') return res.status(400).send({ status: false, msg: "You can not delete document by using title" })
+
+        if (queryAuthorId || queryAuthorId == '') {
             if (!mongoose.Types.ObjectId.isValid(queryAuthorId)) {
                 return res.status(404).send({ status: false, msg: "Please provide a Valid AuthorId" })
             }
         }
         // this field should not be empty
-        if(req.query.tags)
-        {
-            if(req.query.tags=='' ) return res.status(400).send({ status: false, msg: "Tags field should not be empty" })
+        if (req.query.tags) {
+            if (req.query.tags == '') return res.status(400).send({ status: false, msg: "Tags field should not be empty" })
         }
-   
-        if(req.querysubcategory)
-        {
-            if(req.query.subcategory=='') return res.status(400).send({ status: false, msg: "Subcategory field should not be empty" })
 
-        }
-        
-        if(req.query.category)
-        {
-            if(req.query.category=='') return res.status(400).send({ status: false, msg: "category field should not be empty" })
+        if (req.querysubcategory) {
+            if (req.query.subcategory == '') return res.status(400).send({ status: false, msg: "Subcategory field should not be empty" })
 
         }
 
-        
+        if (req.query.category) {
+            if (req.query.category == '') return res.status(400).send({ status: false, msg: "category field should not be empty" })
+
+        }
+
+
         if (filter.blogId) return res.status(400).send({ status: false, msg: "can't find by blogId" })
         if (queryAuthorId) {
             if (queryAuthorId != authorTokenId) return res.status(403).send({ status: false, msg: `you are not Authorise to access data by using this authorId: ${queryAuthorId}` })
@@ -291,8 +294,10 @@ const deleteBlog = async function (req, res) {
         }
 
 
-        let deletedData = await (await blogModel.updateMany(filter, { $set: { isDeleted: true } }))
-        res.status(200).send({ status: true, data: deletedData });
+        let deletedData = await blogModel.updateMany(filter, { $set: { isDeleted: true } }).count()
+
+
+        res.status(200).send({ status: true, delete: `Total ${deletedData} items deleted` });
     }
     catch (error) {
         res.status(500).send({ status: false, err: error.message });
