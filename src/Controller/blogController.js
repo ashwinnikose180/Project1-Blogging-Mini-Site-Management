@@ -85,7 +85,12 @@ const getBlogs = async function (req, res) {
             if (!mongoose.Types.ObjectId.isValid(query.authorId) || query.authorId.toString()=='') return res.status(404).send({ status: false, msg: "Please provide a Valid authorId" })
 
         }
-       
+       if(query.tags=='' ) return res.status(400).send({status:false,msg:"Tags field should not be empty"})
+       if(query.category=='' ) return res.status(400).send({status:false,msg:"category field should not be empty"})
+       if(query.subcategory=='' ) return res.status(400).send({status:false,msg:"subcategory field should not be empty"})
+
+        if(query.blogId || query.blogId=='') return res.status(400).send({status:false,msg:"You can't get any blog by using blogId"})
+        if(query.title || query.title=='') return res.status(400).send({status:false,msg:"You can't get any blog by using title"})
 
         if (isValidRequestBody(query)) {
             const { authorId, category, subcategory, tags } = query
